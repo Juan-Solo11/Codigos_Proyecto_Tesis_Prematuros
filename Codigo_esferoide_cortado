@@ -1,0 +1,39 @@
+% Parámetros del esferoide de 30 semanas
+a = 236.29 / 2; % Semi-eje mayor (Z)
+b = 178.29 / 2; % Semi-eje menor (X e Y)
+z_cut = 0.8 * 236.29 - a; % Posición del plano de corte ajustada al centro
+
+% Mallado del esferoide
+[u, v] = meshgrid(linspace(0, 2*pi, 50), linspace(0, pi, 50));
+x = b * cos(u) .* sin(v);
+y = b * sin(u) .* sin(v);
+z = a * cos(v);
+
+% Aplicar el corte al 80% del eje Z
+mask = z >= z_cut; % Máscara para filtrar puntos por encima del plano de corte
+x_cut = x;
+y_cut = y;
+z_cut_applied = z;
+x_cut(mask) = NaN; % Eliminar puntos por encima del plano de corte
+y_cut(mask) = NaN;
+z_cut_applied(mask) = NaN;
+
+% Visualización
+figure;
+surf(x_cut, y_cut, z_cut_applied, 'FaceAlpha', 0.6, 'EdgeColor', 'k', 'FaceColor', 'cyan'); % Superficie con malla negra
+hold on;
+
+% Mostrar el plano de corte
+[X_plane, Y_plane] = meshgrid(linspace(-b, b, 100));
+Z_plane = z_cut * ones(size(X_plane));
+surf(X_plane, Y_plane, Z_plane, 'FaceAlpha', 0.4, 'EdgeColor', 'none', 'FaceColor', 'red');
+
+% Configuración de gráficos
+xlabel('Eje X (mm)');
+ylabel('Eje Y (mm)');
+zlabel('Eje Z (mm)');
+axis equal;
+grid on;
+view(45, 45); % Ajustar ángulo de vista
+
+view([43 36])
